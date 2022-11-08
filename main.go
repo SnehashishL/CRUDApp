@@ -5,13 +5,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/SnehashishL/crudapp/apis"
+	"github.com/SnehashishL/crudapp/routes"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 
-	r := apis.RouteInit()
+	r := routes.RouteInit()
 	http.Handle("/", r)
 
 	fmt.Println("Server at 8000")
