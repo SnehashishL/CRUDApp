@@ -10,12 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// const (
-// 	DB_USER     = "mysql"
-// 	DB_PASSWORD = "sneh@mysql123"
-// 	DB_NAME     = "todos"
-// )
-
 func printMessage(message string) {
 	fmt.Println("")
 	fmt.Println(message)
