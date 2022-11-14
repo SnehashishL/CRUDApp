@@ -6,6 +6,7 @@ import (
 	"github.com/SnehashishL/crudapp/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 const (
@@ -17,7 +18,11 @@ const (
 // // DB set up
 func SetupDB() *gorm.DB {
 	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
-	gdb, err := gorm.Open(postgres.Open(dbinfo), &gorm.Config{})
+	gdb, err := gorm.Open(postgres.Open(dbinfo), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			NoLowerCase: true, // skip the snake_casing of names
+		},
+	})
 
 	if err != nil {
 		panic(err)
