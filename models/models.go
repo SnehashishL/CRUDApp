@@ -2,8 +2,8 @@ package models
 
 type Todos struct {
 	//gorm.Model
-	TaskID   string `json:"taskid"`
-	TaskName string `json:"taskname"`
+	TaskID   string `json:"TaskID"`
+	TaskName string `json:"TaskName"`
 }
 
 type JsonResponse struct {
