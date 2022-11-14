@@ -74,7 +74,7 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 
 	var task models.Todos
 
-	gdb.Find(&task, "task_id = ?", taskID)
+	gdb.Where("TaskID", taskID).First(&task)
 	fmt.Print(task.TaskID, task.TaskName)
 	//CheckErr(recs.Error)
 
@@ -95,7 +95,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		//db setup
-		db := db.SetupDB()
+		gdb := db.SetupDB()
 
 		printMessage("Inserting task into DB")
 
@@ -103,7 +103,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 		//var lastInsertID int
 		task := models.Todos{TaskID: taskID, TaskName: taskName}
-		db.Create(&task)
+		gdb.Create(&task)
 
 		response = models.JsonResponse{Type: "success", Message: "The task has been inserted successfully!"}
 	}
@@ -123,15 +123,15 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		response = models.JsonResponse{Type: "error", Message: "You are missing taskID parameter."}
 	} else {
 		// db setup
-		db := db.SetupDB()
+		gdb := db.SetupDB()
 		//defer db.Close()
 
-		var task models.Todos
+		//var task models.Todos
 
 		printMessage("Deleting Task from DB")
 
 		//_, err := db.Exec("DELETE FROM todos.todos where taskID = ?", taskID)
-		res := db.Where("task_id = ?", taskID).Delete(&task)
+		res := gdb.Where("TaskID", taskID).Delete(&models.Todos{})
 		CheckErr(res.Error)
 
 		response = models.JsonResponse{Type: "success", Message: "The task has been deleted successfully!"}
@@ -154,8 +154,8 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		db := db.SetupDB()
 		//defer db.Close()
 
-		var task models.Todos
-		if err := db.Where("task_id = ?", taskID).First(&task).Error; err != nil {
+		//var task models.Todos
+		if err := db.Where("TaskID", taskID).First(&models.Todos{}).Error; err != nil {
 			CheckErr(err)
 			return
 		}
@@ -163,7 +163,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("Updating new task with ID: " + taskID + " and name: " + taskName)
 
-		res := db.Model(&task).Where("task_id = ?", taskID).Update("task_name", taskName)
+		res := db.Model(&models.Todos{}).Where("TaskID", taskID).Update("TaskName", taskName)
 
 		CheckErr(res.Error)
 
