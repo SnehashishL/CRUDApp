@@ -27,19 +27,14 @@ func RouteInit() *mux.Router {
 	router := mux.NewRouter()
 
 	// Route handles & endpoints
-
 	// Get all tasks
 	router.HandleFunc("/tasks/", AllTasks).Methods("GET")
-
 	// Get task by ID
 	router.HandleFunc("/myTask/{taskid}", GetTask).Methods("GET")
-
 	// Create a task
 	router.HandleFunc("/addTask/", CreateTask).Methods("POST")
-
 	// Delete a specific task by the taskID
 	router.HandleFunc("/deleteTask/{taskid}", DeleteTask).Methods("DELETE")
-
 	// Update a task
 	router.HandleFunc("/updateTask/{taskid}", UpdateTask).Methods("PUT")
 
@@ -48,16 +43,15 @@ func RouteInit() *mux.Router {
 
 // retrieve all tasks from Todos table
 func AllTasks(w http.ResponseWriter, r *http.Request) {
-
 	gdb := db.SetupDB()
 	//defer db.Close()
 
 	printMessage("Getting ToDos...")
-
-	//rows, err := db.Query("SELECT * FROM todos.todos")
 	var tasks []models.Todos
-	recs := gdb.Find(&tasks)
+	recs := gdb.Table("Todos").Find(&tasks)
 	CheckErr(recs.Error)
+
+	fmt.Println(tasks)
 	json.NewEncoder(w).Encode(tasks)
 }
 
@@ -70,15 +64,12 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 	gdb := db.SetupDB()
 	//defer db.Close()
 
-	printMessage("Getting ToDo by ID...")
-
 	var task models.Todos
+	printMessage("Getting ToDo by ID...")
+	recs := gdb.Table("Todos").Where("TaskID", taskID).First(&task)
+	fmt.Print(task.TaskID, task.Title)
+	CheckErr(recs.Error)
 
-	gdb.Where("TaskID", taskID).First(&task)
-	fmt.Print(task.TaskID, task.TaskName)
-	//CheckErr(recs.Error)
-
-	//var response = JsonResponse{Type: "success", Data: task}
 	json.NewEncoder(w).Encode(task)
 
 }
@@ -86,24 +77,19 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 // Add task to db
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	taskID := r.FormValue("taskid")
-	taskName := r.FormValue("taskname")
+	title := r.FormValue("title")
 
 	var response = models.JsonResponse{}
 
-	if taskID == "" || taskName == "" {
-		response = models.JsonResponse{Type: "error", Message: "You are missing taskID or taskName parameter."}
+	if taskID == "" || title == "" {
+		response = models.JsonResponse{Type: "error", Message: "You are missing taskID or title parameter."}
 	} else {
-
-		//db setup
 		gdb := db.SetupDB()
 
 		printMessage("Inserting task into DB")
-
-		fmt.Println("Inserting new task with ID: " + taskID + " and name: " + taskName)
-
-		//var lastInsertID int
-		task := models.Todos{TaskID: taskID, TaskName: taskName}
-		gdb.Create(&task)
+		fmt.Println("Inserting new task with ID: " + taskID + " and title: " + title)
+		task := models.Todos{TaskID: taskID, Title: title}
+		gdb.Table("Todos").Create(&task)
 
 		response = models.JsonResponse{Type: "success", Message: "The task has been inserted successfully!"}
 	}
@@ -122,16 +108,12 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	if taskID == "" {
 		response = models.JsonResponse{Type: "error", Message: "You are missing taskID parameter."}
 	} else {
-		// db setup
+
 		gdb := db.SetupDB()
 		//defer db.Close()
 
-		//var task models.Todos
-
 		printMessage("Deleting Task from DB")
-
-		//_, err := db.Exec("DELETE FROM todos.todos where taskID = ?", taskID)
-		res := gdb.Where("TaskID", taskID).Delete(&models.Todos{})
+		res := gdb.Table("Todos").Where("TaskID", taskID).Unscoped().Delete(&models.Todos{})
 		CheckErr(res.Error)
 
 		response = models.JsonResponse{Type: "success", Message: "The task has been deleted successfully!"}
@@ -150,21 +132,18 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	if taskID == "" {
 		response = models.JsonResponse{Type: "error", Message: "You are missing taskID parameter."}
 	} else {
-		// db setup
+
 		db := db.SetupDB()
 		//defer db.Close()
 
-		//var task models.Todos
 		if err := db.Where("TaskID", taskID).First(&models.Todos{}).Error; err != nil {
 			CheckErr(err)
 			return
 		}
+
 		printMessage("Updating Task in DB")
-
 		fmt.Println("Updating new task with ID: " + taskID + " and name: " + taskName)
-
 		res := db.Model(&models.Todos{}).Where("TaskID", taskID).Update("TaskName", taskName)
-
 		CheckErr(res.Error)
 
 		response = models.JsonResponse{Type: "success", Message: "The task has been updated successfully!"}
