@@ -29,6 +29,8 @@ func SetupDB() *gorm.DB {
 	}
 
 	gdb.AutoMigrate(&models.Todos{})
+	gdb.AutoMigrate(&models.Profiles{})
+	gdb.AutoMigrate(&models.Tags{})
 
 	return gdb
 }
