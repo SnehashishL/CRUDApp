@@ -10,6 +10,7 @@ type Todos struct {
 	gorm.Model
 	TaskID         string    `json:"taskId"`
 	Title          string    `json:"title"`
+	Priority       string    `json:"priority"`
 	Description    string    `json:"description"`
 	Status         string    `json:"status"`
 	PlannedEndDate time.Time `json:"plannedEndDate"`
