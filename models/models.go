@@ -8,24 +8,24 @@ import (
 
 type Todos struct {
 	gorm.Model
-	TaskID         string `json:"Task ID"`
-	Title          string
-	Description    string
-	Status         string
-	PlannedEndDate time.Time `json:"Planned End Date"`
-	TagID          int       `json:"Tag ID"`
-	UserID         string    `jason:"User ID"`
+	TaskID         string    `json:"taskId"`
+	Title          string    `json:"title"`
+	Description    string    `json:"description"`
+	Status         string    `json:"status"`
+	PlannedEndDate time.Time `json:"plannedEndDate"`
+	TagID          int       `json:"tagId"`
+	UserID         string    `jason:"userId"`
 }
 
 type Tags struct {
-	TagID   int    `json:"Tag ID"`
-	TagName string `json:"Tag Name"`
+	TagID   int    `json:"tagId"`
+	TagName string `json:"tagName"`
 }
 type Profiles struct {
-	ID        string
-	FirstName string `json:"First Name"`
-	LastName  string `json:"Last Name"`
-	PIN       string
+	ID        string `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	PIN       string `json:"PIN"`
 }
 
 type JsonResponse struct {
