@@ -19,14 +19,13 @@ type Todos struct {
 }
 
 type Tags struct {
-	TagID   int    `json:"tagId"`
+	gorm.Model
 	TagName string `json:"tagName"`
 }
 type Profiles struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	PIN       string `json:"PIN"`
+	gorm.Model
+	Name string `json:"Name"`
+	//PIN  string `json:"PIN"`
 }
 
 type JsonResponse struct {
