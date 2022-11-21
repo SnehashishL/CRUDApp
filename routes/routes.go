@@ -19,7 +19,7 @@ func RouteInit() *mux.Router {
 	// Delete a specific task by the taskID
 	router.HandleFunc("/deleteTask/{taskid}", apis.DeleteTask).Methods("DELETE")
 	// Update a task
-	router.HandleFunc("/updateTask/{taskid}", apis.UpdateTask).Methods("PUT")
+	router.HandleFunc("/updateTask/title/{taskid}", apis.UpdateTitle).Methods("PUT")
 
 	// User handles
 	// get all profiles
