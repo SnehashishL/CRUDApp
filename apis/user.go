@@ -52,11 +52,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		response = models.JsonResponse{Type: "error", Message: "You are missing user name(s)."}
 	} else {
 		gdb := db.SetupDB()
-		if err := gdb.Table("Profiles").Where("Name", oldName).First(&models.Profiles{}).Error; err != nil {
-			CheckErr(err)
+		newuser := models.Profiles{}
+		rec := gdb.Table("Profiles").Where("Name", oldName).First(&newuser)
+		if rec.Error != nil {
+			CheckErr(rec.Error)
 			return
 		} else {
-			res := gdb.Table("Profiles").Where("Name", oldName).Update("Name", newName)
+			newuser.Name = newName
+			res := gdb.Table("Profiles").Where("Name", oldName).Updates(newuser)
 			CheckErr(res.Error)
 			response = models.JsonResponse{Type: "success", Message: "The user profile has been updated successfully!"}
 		}
