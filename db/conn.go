@@ -23,14 +23,11 @@ func SetupDB() *gorm.DB {
 			NoLowerCase: true, // skip the snake_casing of names
 		},
 	})
-
 	if err != nil {
 		panic(err)
 	}
 
-	gdb.AutoMigrate(&models.Todos{})
-	gdb.AutoMigrate(&models.Profiles{})
-	gdb.AutoMigrate(&models.Tags{})
+	gdb.AutoMigrate(&models.Todos{}, &models.Profiles{}, &models.Tags{})
 
 	return gdb
 }
